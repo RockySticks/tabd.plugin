@@ -1,0 +1,119 @@
+<!-- bookmarks.html — tabd.plugin v0.17 external bookmarks manager -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>tabd.bookmarks</title>
+  <style>
+    body {
+      background: #222;
+      color: white;
+      font-family: sans-serif;
+      padding: 20px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 20px;
+      border-bottom: 1px solid #444;
+      padding-bottom: 4px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    input, button {
+      padding: 6px;
+      font-size: 14px;
+      border-radius: 4px;
+      border: 1px solid #666;
+      background: #111;
+      color: white;
+    }
+
+    input {
+      flex: 1;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #333;
+    }
+  </style>
+</head>
+<body>
+  <h2>Bookmarks Manager</h2>
+  <ul id="bookmarkList"><li>Loading...</li></ul>
+
+  <div>
+    <input id="newTitle" placeholder="New title" />
+    <input id="newURL" placeholder="https://..." />
+    <button id="addBtn">➕ Add</button>
+  </div>
+
+  <script>
+    chrome.storage.local.get('tabdSettings', data => {
+      const settings = data.tabdSettings;
+      if (!settings) return;
+
+      const profile = settings.profiles[settings.currentProfile];
+      if (!profile.bookmarks) profile.bookmarks = [];
+
+      const list = document.getElementById('bookmarkList');
+
+      function render() {
+        list.innerHTML = '';
+        profile.bookmarks.forEach((b, i) => {
+          const li = document.createElement('li');
+
+          const title = document.createElement('input');
+          const url = document.createElement('input');
+          title.value = b.title;
+          url.value = b.url;
+          title.placeholder = 'Title';
+          url.placeholder = 'URL';
+
+          title.oninput = () => b.title = title.value.trim();
+          url.oninput = () => b.url = url.value.trim();
+
+          const del = document.createElement('button');
+          del.textContent = '×';
+          del.onclick = () => {
+            profile.bookmarks.splice(i, 1);
+            chrome.storage.local.set({ tabdSettings: settings }, render);
+          };
+
+          li.append(title, url, del);
+          list.append(li);
+        });
+      }
+
+      render();
+
+      document.getElementById('addBtn').onclick = () => {
+        const title = document.getElementById('newTitle').value.trim();
+        const url = document.getElementById('newURL').value.trim();
+        if (!title || !url) return;
+
+        profile.bookmarks.push({ title, url });
+        chrome.storage.local.set({ tabdSettings: settings }, () => {
+          document.getElementById('newTitle').value = '';
+          document.getElementById('newURL').value = '';
+          render();
+        });
+      };
+    });
+  </script>
+</body>
+</html>

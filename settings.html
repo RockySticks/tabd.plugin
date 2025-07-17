@@ -1,0 +1,128 @@
+<!-- settings.html — tabd.plugin v0.17 external settings panel -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>tabd.settings</title>
+  <style>
+    body {
+      background: #222;
+      color: white;
+      font-family: sans-serif;
+      padding: 20px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 20px;
+      border-bottom: 1px solid #444;
+      padding-bottom: 4px;
+    }
+
+    .setting-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 6px;
+      font-size: 14px;
+      margin-bottom: 6px;
+      border-radius: 4px;
+      border: 1px solid #666;
+      background: #111;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h2>Tabd Settings Panel</h2>
+  <div id="settingsContainer">Loading…</div>
+
+  <script>
+    chrome.storage.local.get('tabdSettings', data => {
+      const settings = data.tabdSettings;
+      if (!settings) return;
+
+      const container = document.getElementById('settingsContainer');
+      container.innerHTML = '';
+
+      const prof = settings.profiles[settings.currentProfile];
+
+      // Profile selector
+      const group = document.createElement('div');
+      group.className = 'setting-group';
+
+      const label = document.createElement('label');
+      label.textContent = 'Active Profile';
+      group.appendChild(label);
+
+      const sel = document.createElement('select');
+      Object.keys(settings.profiles).forEach(name => {
+        const opt = document.createElement('option');
+        opt.value = name;
+        opt.textContent = name;
+        if (name === settings.currentProfile) opt.selected = true;
+        sel.appendChild(opt);
+      });
+      sel.onchange = () => {
+        settings.currentProfile = sel.value;
+        chrome.storage.local.set({ tabdSettings: settings }, () => location.reload());
+      };
+      group.appendChild(sel);
+      container.appendChild(group);
+
+      // Theme
+      const themeGroup = document.createElement('div');
+      themeGroup.className = 'setting-group';
+      const themeLabel = document.createElement('label');
+      themeLabel.textContent = 'Theme';
+      themeGroup.appendChild(themeLabel);
+      const themeSelect = document.createElement('select');
+      ['light', 'dark'].forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t;
+        opt.textContent = t;
+        if (prof.theme === t) opt.selected = true;
+        themeSelect.appendChild(opt);
+      });
+      themeSelect.onchange = () => {
+        prof.theme = themeSelect.value;
+        chrome.storage.local.set({ tabdSettings: settings }, () => {});
+      };
+      themeGroup.appendChild(themeSelect);
+      container.appendChild(themeGroup);
+
+      // Force Dark
+      const darkGroup = document.createElement('div');
+      darkGroup.className = 'setting-group';
+      const darkToggle = document.createElement('input');
+      darkToggle.type = 'checkbox';
+      darkToggle.checked = prof.forceDark;
+      darkToggle.onchange = () => {
+        prof.forceDark = darkToggle.checked;
+        chrome.storage.local.set({ tabdSettings: settings });
+      };
+      const darkLabel = document.createElement('label');
+      darkLabel.textContent = 'Force Dark Mode';
+      darkGroup.appendChild(darkLabel);
+      darkGroup.appendChild(darkToggle);
+      container.appendChild(darkGroup);
+
+      // Reset button
+      const resetBtn = document.createElement('button');
+      resetBtn.textContent = 'Reset Settings';
+      resetBtn.onclick = () => {
+        chrome.storage.local.clear(() => location.reload());
+      };
+      container.appendChild(resetBtn);
+    });
+  </script>
+</body>
+</html>

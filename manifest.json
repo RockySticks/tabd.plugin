@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "tabd.plugin",
+  "short_name": "tabd",
+  "description": "Created by Con. tabd.plugin is a modular command bar and bookmark shell designed for RockySticks, Sneakon Search, and any browser without an address bar. Ideal for fullscreen experiences, embedded environments, or frosted shell modes.",
+  "version": "0.17",
+  "permissions": ["storage"],
+  "action": {
+    "default_title": "tabd.plugin",
+    "default_icon": "logo.png"
+  },
+  "options_page": "settings.html",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "host_permissions": ["<all_urls>"],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "settings.html",
+        "settings.js",
+        "bookmarks.html",
+        "bookmarks.js",
+        "style.css",
+        "logo.png"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "icons": {
+    "16": "logo.png",
+    "48": "logo.png",
+    "128": "logo.png"
+  }
+}
