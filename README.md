@@ -44,17 +44,6 @@ Uses tabd. flow logic for conditional formatting and link triggers.
 tabd.plugin runs automatically if detected inside RockySticks and packaged correctly as a Chrome extension.  
 No manual install required when bundled natively with RockyBrowser v1.3+.
 
-Example shell manifest snippet:
-```json
-{
-  "plugin": "tabd",
-  "bookmarks": true,
-  "overlays": "auto",
-  "settings": "sync",
-  "compatible": ["RockyBrowser", "tabd.flow"]
-}
-```
-
 ---
 
 ## 🪛 Development
