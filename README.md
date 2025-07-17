@@ -73,12 +73,5 @@ Released under the **Frost Shell License (FSL-1.0)**
 You’re free to fork, remix, and repackage so long as shell integrity and lore structure are maintained.
 
 ---
-
-## 🔍 Lore
-
-tabd.plugin first appeared during the RockySticks 1.3 frost drop.  
-While its scripts live openly inside RockySticks, its flow logic aligns with `tabd.` scripting and may trigger legacy UI overlays when used alongside `tabdShellManager`.
-
 > “Overlay is camouflage. Navigation is code. The shell always knows.”
-
 ---
